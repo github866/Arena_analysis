@@ -1,4 +1,5 @@
 '''
+    version 0.0 original version
     options are the doing the same thing but output in different amount of files
     the purpose to create two options is to avoid some bugs that may lose some lines in pythons
 
