@@ -469,7 +469,9 @@ def find_plycount_min(copy_plycount,play_count,overall_result,total_win):
     
 def main():
     help(instructions)
-    pgn_file = input("please enter your file location: ")
+    pgn_file = input("please enter your file location(deflaut is Arena.pgn): ")
+    if pgn_file == '':
+        pgn_file = "Arena.pgn"
     split_pgn(pgn_file)
     decisive_file = open(pgn_file,'r')
     line = decisive_file.readlines()
