@@ -351,7 +351,7 @@ def result_data_anaysls(line):
     write_file.write(f'{double_win_result_num} number of games resulted in win for both engines in white and black\n')
     write_file.write(f'{engine1} had {decisive_win_result1_num} decisive wins\n')
     write_file.write(f'{engine2} had {decisive_win_result2_num} decisive wins\n')
-    write_file.write(f'{engine1} won from both white and black in the same opening {one_win_all_result2_num} times\n')
+    write_file.write(f'{engine1} won from both white and black in the same opening {one_win_all_result1_num} times\n')
     write_file.write(f'{engine2} won from both white and black in the same opening {one_win_all_result2_num} times\n')
     write_file.write(f'there are {double_draw_result_num} rounds games results in draw for both sides\n')
 
