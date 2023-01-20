@@ -537,12 +537,12 @@ def eval_adjust (array):
 def eval_compare_blunder (white_array,black_array,overall_result):
     if overall_result == '1-0':
         for i in range(len(white_array)-1):
-            if white_array[i] > 0.5 and white_array[i+1] > white_array[i] + 1.2 and white_array[i] < 2.75:
+            if white_array[i] > 0.2 and white_array[i+1] > white_array[i] + 1.2 and white_array[i] < 2.75:
                 return True
                 break
     elif overall_result == '0-1':
         for i in range(len(white_array)-1):
-            if black_array[i] > 0.5 and black_array[i+1] > black_array[i] + 1.2 and black_array[i] < 2.75:
+            if black_array[i] > 0.2 and black_array[i+1] > black_array[i] + 1.2 and black_array[i] < 2.75:
                 return True
                 break
     else:
