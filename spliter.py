@@ -3,7 +3,7 @@ def instructions():
        There are two parts in this code
        the first part is split pgn so that the pgn size is not too big
        the second part is to anaylsis the result of the games
-
+       blunder and noob check is included
     '''
 
 ################################
@@ -240,7 +240,7 @@ def result_data_anaysls(line):
 
     # if the total games is odd, add an 1/2-1/2 in even game list
     if len(odd_game) > len(even_game):
-        even_game.append('1/2-1/2')
+        even_game.append(odd_game[-1])
 
     #determine decisives
     for i in range(len(odd_game)):
@@ -467,16 +467,178 @@ def find_plycount_min(copy_plycount,play_count,overall_result,total_win):
         print(rank_decisive_plycount[i],end = ' ')
         write_file.write(f'{rank_decisive_plycount[i]} ')
     
+def note_deletion(pgn_file):
+    temp_file = open(pgn_file,'r')
+    lines = temp_file.readlines()
+    
+    newlines = []
+    write_flag = True
+    
+    for i in range(len(lines)):
+        
+        if lines[i][0:3] == '[Ro' or lines[i] == "":
+            
+            #new_file.write(lines[i])
+            if lines[i] != '\n':
+                newlines.append(lines[i])
+        
+        elif lines[i][0] == '[':
+            continue
+    
+        else:
+        
+                
+            for j in lines[i]:
+                if j == '(' or j == '/':
+                    write_flag = False
+                elif j == ')' or j == '}':
+                    write_flag = True
+    
+                
+                if write_flag == True and j != ")":
+                    newlines[-1] += j
+                    #new_file.write(j)
+           
+    return newlines    
+
+def next_line_delete (array):
+    
+    # make an empty string list with some length
+    new_list = []
+    for i in range(len(array)):
+        new_list.append('')
+    
+    for i in range(len(array)):
+        for j in range(len(array[i])):
+            if array[i][j] == '\n':
+                new_list[i] += ' '
+            else:
+                new_list[i] += array[i][j]
+    
+    return new_list
+
+def eval_adjust (array):
+    for i in range(len(array)):
+        if '-M' in array[i]:
+            array[i] = -900
+        elif '+M' in array[i]:
+            array[i] = 900
+        
+        try:    
+            array[i] = float(array[i])
+        except:
+            try:    
+                array[i] = float(array[i][0:-1])
+            except:
+                array[i] = array[i-1]
+            
+    return array
+
+def eval_compare_blunder (white_array,black_array,overall_result):
+    if overall_result == '1-0':
+        for i in range(len(white_array)-1):
+            if white_array[i] > 0.5 and white_array[i+1] > white_array[i] + 1.2 and white_array[i] < 3:
+                return True
+                break
+    elif overall_result == '0-1':
+        for i in range(len(white_array)-1):
+            if black_array[i] > 0.5 and black_array[i+1] > black_array[i] + 1.2 and black_array[i] < 3:
+                return True
+                break
+    else:
+        return False
+    
+def eval_compare_noob (array,array2,overall_result):
+    
+    if overall_result == '1/2-1/2':
+        for i in range(len(array)):
+            if array[i] > 2:
+                return True
+                break
+        for i in range(len(array2)):
+            if array2[i] > 2:
+                return True
+                break
+    else:
+        return False
+
+def blunder_check (array,overall_result):
+    
+    write_file = open('data.txt','a')
+    blunder_exist = []
+    noob_exist = []
+    for i in range(len(array)):
+        move_sequence = 0
+        white_eval = []
+        black_eval = []
+        location = 0
+        for j in range(len(array[i])):
+            if array[i][j] == '}':
+                location = j
+                break
+        
+        # game that white play first
+        if array[i][location+4] != ' ':
+            move_sequence += 1
+            
+        # eval location
+        for j in range(len(array[i])):
+            
+            # black play first
+            if move_sequence % 2 == 0:
+                if array[i][j] == '{':
+                    move_sequence += 1
+                    black_eval.append(array[i][(j+2):(j+7)])
+                
+            # white play first
+            elif move_sequence % 2 == 1:
+                if array[i][j] == '{':
+                    move_sequence += 1
+                    white_eval.append(array[i][(j+2):(j+7)])
+                
+        #eval transfer from string to float
+        white_eval = eval_adjust(white_eval)
+        black_eval = eval_adjust(black_eval)
+             
+        # boolean value
+        blunder_val = eval_compare_blunder(white_eval,black_eval ,overall_result[i])
+        noob_val = eval_compare_noob(white_eval,black_eval, overall_result[i])
+        
+        if blunder_val == True:
+            blunder_exist.append(i)
+        if noob_val == True:
+            noob_exist.append(i)
+
+    print('list of game that blunder for one engine:   ',end = '')
+    write_file.write('list of game that blunder for one engine:   ')
+    for i in range(len(blunder_exist)):
+        blunder_exist[i] += 1
+        print(f' {blunder_exist[i]}',end = '')
+        write_file.write(f' {blunder_exist[i]}')
+    print()
+    write_file.write('\n')    
+    
+    print('list of game that noobed for one engine:    ',end = '')
+    write_file.write('list of game that noobed for one engine:    ')
+    for i in range(len(noob_exist)):
+        noob_exist[i] += 1
+        print(f' {noob_exist[i]}',end = '')
+        write_file.write(f' {noob_exist[i]}')
+    
+    
 def main():
-    help(instructions)
-    pgn_file = input("please enter your file location(deflaut is Arena.pgn): ")
-    if pgn_file == '':
-        pgn_file = "Arena.pgn"
-    split_pgn(pgn_file)
+    #help(instructions)
+    #pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
+    #if pgn_file == '':
+        #pgn_file = 'Arena.pgn'
+    #pgn_file = "C:\\Users\\ZZHzh\\Desktop\\arena_3.5.1\\Arena.pgn"
+    pgn_file = 'Arena.pgn'
+    #split_pgn(pgn_file)
     decisive_file = open(pgn_file,'r')
     line = decisive_file.readlines()
     result_data = result_data_anaysls(line)
-    find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
+    #find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
+    blunder_check(next_line_delete(note_deletion(pgn_file)),result_data[2])
     
 if __name__=="__main__":
     main()
