@@ -1,9 +1,9 @@
 def instructions():
     '''
-       There are two parts in this code
+       There are three parts in this code
        the first part is split pgn so that the pgn size is not too big
        the second part is to anaylsis the result of the games
-       blunder and noob check is included
+       the third part is to make blunder and noob check
     '''
 
 ################################
@@ -537,12 +537,12 @@ def eval_adjust (array):
 def eval_compare_blunder (white_array,black_array,overall_result):
     if overall_result == '1-0':
         for i in range(len(white_array)-1):
-            if white_array[i] > 0.5 and white_array[i+1] > white_array[i] + 1.2 and white_array[i] < 3:
+            if white_array[i] > 0.5 and white_array[i+1] > white_array[i] + 1.2 and white_array[i] < 2.75:
                 return True
                 break
     elif overall_result == '0-1':
         for i in range(len(white_array)-1):
-            if black_array[i] > 0.5 and black_array[i+1] > black_array[i] + 1.2 and black_array[i] < 3:
+            if black_array[i] > 0.5 and black_array[i+1] > black_array[i] + 1.2 and black_array[i] < 2.75:
                 return True
                 break
     else:
@@ -631,11 +631,12 @@ def main():
     pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
     if pgn_file == '':
         pgn_file = 'Arena.pgn'
+
     split_pgn(pgn_file)
     decisive_file = open(pgn_file,'r')
     line = decisive_file.readlines()
     result_data = result_data_anaysls(line)
-    find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
+    #find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
     blunder_check(next_line_delete(note_deletion(pgn_file)),result_data[2])
     
 if __name__=="__main__":
