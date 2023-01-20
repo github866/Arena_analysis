@@ -627,17 +627,15 @@ def blunder_check (array,overall_result):
     
     
 def main():
-    #help(instructions)
-    #pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
-    #if pgn_file == '':
-        #pgn_file = 'Arena.pgn'
-    #pgn_file = "C:\\Users\\ZZHzh\\Desktop\\arena_3.5.1\\Arena.pgn"
-    pgn_file = 'Arena.pgn'
-    #split_pgn(pgn_file)
+    help(instructions)
+    pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
+    if pgn_file == '':
+        pgn_file = 'Arena.pgn'
+    split_pgn(pgn_file)
     decisive_file = open(pgn_file,'r')
     line = decisive_file.readlines()
     result_data = result_data_anaysls(line)
-    #find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
+    find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
     blunder_check(next_line_delete(note_deletion(pgn_file)),result_data[2])
     
 if __name__=="__main__":
