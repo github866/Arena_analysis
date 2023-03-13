@@ -537,12 +537,12 @@ def eval_adjust (array):
 def eval_compare_blunder (white_array,black_array,overall_result):
     if overall_result == '1-0':
         for i in range(len(white_array)-1):
-            if white_array[i] > -0.4 and white_array[i+1] > white_array[i] + 1.0 and white_array[i] < 2.75:
+            if white_array[i] > -0.4 and white_array[i+1] > white_array[i] + 0.9 and white_array[i] < 2.5:
                 return True
                 break
     elif overall_result == '0-1':
         for i in range(len(black_array)-1):
-            if black_array[i] > -0.4 and black_array[i+1] > black_array[i] + 1.0 and black_array[i] < 2.75:
+            if black_array[i] > -0.4 and black_array[i+1] > black_array[i] + 0.9 and black_array[i] < 2.5:
                 return True
                 break
     else:
@@ -560,7 +560,7 @@ def eval_compare_noob (array,array2,overall_result):
                 return True
                 break
     else:
-        return False
+        return False 
 
 def blunder_check (array,overall_result):
     
@@ -625,12 +625,66 @@ def blunder_check (array,overall_result):
         print(f' {noob_exist[i]}',end = '')
         write_file.write(f' {noob_exist[i]}')
     
+def tb_nodes_check(file):
+    read_file = open(file,'r')
+    lines = read_file.readlines()
+    
+    largest_tb = 0
+    largest_nodes = 0
+    largest_time = 0
+    for i in range(len(lines)):
+        for j in range(len(lines[i])):
+            try:
+                if(lines[i][j:j+5] == "nodes"):
+                    space = j + 6
+                    while(lines[i][space] != ' '):
+                        space += 1
+                        
+                    nodes = int((lines[i][j+6:space]))
+                    if nodes > largest_nodes:
+                        largest_nodes = nodes
+                        
+                if(lines[i][j:j+6] == "tbhits"):
+                    space = j + 7
+                    while(lines[i][space] != ' '):
+                        space += 1
+                    
+                    tbhits = int((lines[i][j+7:space]))
+                    if tbhits > largest_tb:
+                        largest_tb = tbhits
+                        
+                if(lines[i][j:j+4] == "time"):
+                    space = j + 5
+                    while(lines[i][space] != ' '):
+                        space += 1
+                    
+                    time = int((lines[i][j+5:space]))
+                    if time > largest_time:
+                        largest_time = time
+                    
+            except:
+                continue
+            
+        if i % 100000 == 0:
+            print(i / (len(lines)))
+            
+            
+    print(f'{largest_nodes} is the largest nodes')
+    print(f'{largest_tb} is the largest tb')
+    print(f'{largest_time} is the largest time used')
+
+    read_file.close()
+    
+    write_file = open('data.txt','a')
+    write_file.write(f'\n{largest_nodes} is the largest nodes\n')
+    write_file.write(f'{largest_tb} is the largest tb\n')
+    write_file.write(f'{largest_time} is the largest time used\n')
     
 def main():
     help(instructions)
-    #pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
-    #if pgn_file == '':
-    #    pgn_file = 'Arena.pgn'
+    pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
+    if pgn_file == '':
+        pgn_file = 'Arena.pgn'
     pgn_file = "C:\\Users\\ZZHzh\\Desktop\\arena_3.5.1\\Arena.pgn"
     split_pgn(pgn_file)
     decisive_file = open(pgn_file,'r')
@@ -639,6 +693,10 @@ def main():
     find_plycount_min(result_data[0],result_data[1],result_data[2],result_data[3])
     print()
     blunder_check(next_line_delete(note_deletion(pgn_file)),result_data[2])
+    print(len(result_data[2]))
     
+    #log_file = input("put your debugger file: ")
+    log_file = "C:\\Users\\ZZHzh\\Desktop\\arena_3.5.1\\arena.debug"
+    tb_nodes_check(log_file)
 if __name__=="__main__":
     main()
