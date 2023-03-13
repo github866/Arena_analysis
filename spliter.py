@@ -685,7 +685,6 @@ def main():
     pgn_file = input("please enter your file location: (default is Arena.pgn,press enter)")
     if pgn_file == '':
         pgn_file = 'Arena.pgn'
-    pgn_file = "C:\\Users\\ZZHzh\\Desktop\\arena_3.5.1\\Arena.pgn"
     split_pgn(pgn_file)
     decisive_file = open(pgn_file,'r')
     line = decisive_file.readlines()
