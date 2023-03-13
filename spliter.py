@@ -694,8 +694,7 @@ def main():
     blunder_check(next_line_delete(note_deletion(pgn_file)),result_data[2])
     print(len(result_data[2]))
     
-    #log_file = input("put your debugger file: ")
-    log_file = "C:\\Users\\ZZHzh\\Desktop\\arena_3.5.1\\arena.debug"
+    log_file = input("put your debugger file: ")
     tb_nodes_check(log_file)
 if __name__=="__main__":
     main()
